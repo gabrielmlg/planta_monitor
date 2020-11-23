@@ -59,9 +59,9 @@ app.layout = html.Div(
                 dcc.Graph(id='live-graph', animate=True),
                 dcc.Interval(
                     id='graph-update',
-                    interval=1*1000
+                    interval=1*2000 # 2 seg
                 ),
-            ]), md=6,  
+            ]), md=10,  
         ), 
         align="right", 
         justify="center")
@@ -77,7 +77,8 @@ def update_graph_scatter(input_data):
     
     # ToDo: Qnd der erro, como proceder? Tentar colocar o dataframe como atributo numa classe instanciada
     df = pd.read_csv('/Users/gabriel/Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv') 
-    
+    # df.sort_values('data', inplace=True)
+
     data = go.Scatter(
             x=df['data'],
             y=df['umidade'],

@@ -49,13 +49,13 @@ def main():
                         'temperatura': temperatura
                     })
 
-                    df = df.append(df2, ignore_index=True)
-                    df['data'] = pd.to_datetime(df['data'])
-                    df.sort_values('data', inplace=True)
+                    #df = df.append(df2, ignore_index=True)
+                    #df['data'] = pd.to_datetime(df['data'])
+                    #df.sort_values('data', inplace=True)
 
-                    df.to_csv('Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv', index=False)
+                    df2.to_csv('Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv', index=False)
 
-                    print(df.tail())
+                    print(df2.tail())
                     #print("Line " + str(count) + ': ' + joined_seq)
                     seq = []
                     count += 1
