@@ -1,6 +1,8 @@
 from datetime import timedelta
 import dash
 import dash_bootstrap_components as dbc
+from dash_bootstrap_components._components.Card import Card
+from dash_bootstrap_components._components.CardBody import CardBody
 from dash_bootstrap_components._components.Col import Col
 from dash_bootstrap_components._components.Row import Row
 from dash_core_components.Graph import Graph
@@ -40,19 +42,28 @@ navbar = dbc.NavbarSimple(
 
 app.layout = html.Div(
     [
-
         dbc.Row(dbc.Col(html.Div(navbar))), 
-        html.Br(),
-
-        dbc.Row(
+        
+        dbc.Row([
             dbc.Col(
                 html.Div([
                     dcc.Graph(id='umidade_indicator', animate=True), 
-                ]), md=3
+                ]), md=4
             ), 
-            align="right", 
-            justify="center"
-        ),  
+            dbc.Col(
+                html.Div([
+                    #html.H2('TESTE')
+                ]), md=4
+            ),
+            dbc.Col(
+                html.Div([
+                    #html.H2('TESTE')
+                ]), md=4
+            ),
+        ], align="center", 
+            justify="center", 
+            style={'margin-top': '4px',
+            'margin-left': '4px',}),  
 
         dbc.Row(dbc.Col(
             html.Div([
@@ -61,10 +72,13 @@ app.layout = html.Div(
                     id='graph-update',
                     interval=1*2000 # 2 seg
                 ),
-            ]), md=10,  
+            ]), md=12,  
         ), 
         align="right", 
-        justify="center")
+        justify="center", 
+        style={'margin-top': '4px',
+            'margin-left': '4px',
+            'margin-right': '4px'})
 
     ]
 )
@@ -85,11 +99,13 @@ def update_graph_scatter(input_data):
             name='Scatter',
             mode= 'lines', 
             line=dict(color='green', width=1.8), 
+            line_shape='spline',
             # marker=dict(size=4)
             )
     xaxis_max_date = pd.to_datetime(max(df['data'])) + timedelta(minutes=1)
-    scatter_fig = {'data': [data],'layout' : go.Layout(xaxis=dict(range=[min(df['data']),xaxis_max_date]),
-                                                yaxis=dict(range=[min(df['umidade'])-2,max(df['umidade'])+2]),)}
+    scatter_fig = {'data': [data],
+                    'layout' : go.Layout(xaxis=dict(range=[min(df['data']),xaxis_max_date]),
+                                                yaxis=dict(range=[min(df['umidade'])-2,max(df['umidade'])+2]),), }
 
 
     data_umidade_indicator = go.Indicator(
