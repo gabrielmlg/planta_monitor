@@ -13,7 +13,12 @@ s = Serial(port='/dev/cu.usbmodem146101', baudrate=9601, bytesize=8, parity='N',
 data = []
 umidade = []
 temperatura = []
-df = pd.DataFrame()
+
+try: 
+   df = pd.read_csv('Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv')
+   print('Historico')
+except:
+    df = pd.DataFrame()
 
 print(os.getcwd())
 
@@ -34,13 +39,6 @@ def main():
                     data.append(datetime.now())
                     umidade.append(doc_clotilde['umidade_solo'])
                     temperatura.append(doc_clotilde['umidade_solo'])
-
-
-                    df = pd.DataFrame({
-                        'data': data, 
-                        'umidade': umidade, 
-                        'temperatura': temperatura
-                    })
 
                     df.to_csv('Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv', index=False)
 

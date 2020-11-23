@@ -1,5 +1,9 @@
+from datetime import timedelta
 import dash
 import dash_bootstrap_components as dbc
+from dash_bootstrap_components._components.Col import Col
+from dash_bootstrap_components._components.Row import Row
+from dash_core_components.Graph import Graph
 import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output
@@ -7,7 +11,6 @@ from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 
 import pandas as pd
-
 
 app = dash.Dash(
     name='clotilde-monitor', 
@@ -39,7 +42,17 @@ app.layout = html.Div(
     [
 
         dbc.Row(dbc.Col(html.Div(navbar))), 
-        html.Br(), 
+        html.Br(),
+
+        dbc.Row(
+            dbc.Col(
+                html.Div([
+                    dcc.Graph(id='umidade_indicator', animate=True), 
+                ]), md=3
+            ), 
+            align="right", 
+            justify="center"
+        ),  
 
         dbc.Row(dbc.Col(
             html.Div([
@@ -48,30 +61,54 @@ app.layout = html.Div(
                     id='graph-update',
                     interval=1*1000
                 ),
-            ])
-        ))
+            ]), md=6,  
+        ), 
+        align="right", 
+        justify="center")
 
     ]
 )
 
 
 @app.callback(Output('live-graph', 'figure'),
+                Output('umidade_indicator', 'figure'),
               [Input('graph-update', 'n_intervals')])
 def update_graph_scatter(input_data):
     
-    df = pd.read_csv('/Users/gabriel/Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv')
-
+    # ToDo: Qnd der erro, como proceder? Tentar colocar o dataframe como atributo numa classe instanciada
+    df = pd.read_csv('/Users/gabriel/Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv') 
+    
     data = go.Scatter(
             x=df['data'],
             y=df['umidade'],
             name='Scatter',
-            mode= 'lines+markers', 
+            mode= 'lines', 
             line=dict(color='green', width=1.8), 
-            marker=dict(size=4)
+            # marker=dict(size=4)
             )
-
-    return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[min(df['data']),max(df['data'])]),
+    xaxis_max_date = pd.to_datetime(max(df['data'])) + timedelta(minutes=1)
+    scatter_fig = {'data': [data],'layout' : go.Layout(xaxis=dict(range=[min(df['data']),xaxis_max_date]),
                                                 yaxis=dict(range=[min(df['umidade'])-2,max(df['umidade'])+2]),)}
+
+
+    data_umidade_indicator = go.Indicator(
+        mode = 'gauge+number+delta', 
+        gauge = {'shape': "bullet"},
+        delta = {'reference': 500, 'relative': False}, 
+        value = int(df.tail(1)['umidade'].values),
+        domain = {'x': [0.1, 1], 'y': [0.2, 0.9]},
+        #title = {'text': "Indicator de Umidade:"}
+    )
+
+    indicator_fig = {'data': [data_umidade_indicator],
+                    'layout' : go.Layout(height=300, 
+                                        width=600, 
+                                        title='Indicador de Úmidade:', 
+                                        template='plotly_white')}
+
+
+    return scatter_fig, indicator_fig
+    
 
 
 
