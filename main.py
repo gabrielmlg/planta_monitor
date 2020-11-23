@@ -14,11 +14,7 @@ data = []
 umidade = []
 temperatura = []
 
-try: 
-   df = pd.read_csv('Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv')
-   print('Historico')
-except:
-    df = pd.DataFrame()
+
 
 print(os.getcwd())
 
@@ -26,6 +22,12 @@ def main():
     #this will store the line
     seq = []
     count = 1
+
+    try: 
+        df = pd.read_csv('Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv')
+        print('Carregou ...')
+    except:
+        df = pd.DataFrame()
 
     try:
         while True:
@@ -39,6 +41,17 @@ def main():
                     data.append(datetime.now())
                     umidade.append(doc_clotilde['umidade_solo'])
                     temperatura.append(doc_clotilde['umidade_solo'])
+
+
+                    df2 = pd.DataFrame({
+                        'data': data, 
+                        'umidade': umidade, 
+                        'temperatura': temperatura
+                    })
+
+                    df = df.append(df2, ignore_index=True)
+                    df['data'] = pd.to_datetime(df['data'])
+                    df.sort_values('data', inplace=True)
 
                     df.to_csv('Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv', index=False)
 
