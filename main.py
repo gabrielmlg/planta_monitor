@@ -14,8 +14,6 @@ data = []
 umidade = []
 temperatura = []
 
-
-
 print(os.getcwd())
 
 def main():
