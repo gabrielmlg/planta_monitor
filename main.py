@@ -11,9 +11,12 @@ PARAM_ASCII=str(chr(116))
 serial_port_raspi = '/dev/ttyACM0' 
 url_raspi = '/home/gabriel/dev/planta_monitor/app/dataset/clotilde_v1.csv'
 serial_port_mac = '/dev/cu.usbmodem146101'
-url_mac = 'Users/gabriel/Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv'
+url_mac = '/Users/gabriel/Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv'
 
-s = Serial(port=serial_port_raspi, baudrate=9601, bytesize=8, parity='N', stopbits=1, timeout=None, xonxoff=False, rtscts=False, dsrdtr=False)
+serial_port = serial_port_mac
+data_url =  url_mac
+
+s = Serial(port=serial_port, baudrate=9601, bytesize=8, parity='N', stopbits=1, timeout=None, xonxoff=False, rtscts=False, dsrdtr=False)
 
 data = []
 umidade = []
@@ -29,7 +32,7 @@ def main():
     count = 1
 
     try: 
-        df = pd.read_csv(url_raspi)
+        df = pd.read_csv(data_url)
         print('Carregou ...')
     except:
         df = pd.DataFrame()
@@ -41,10 +44,10 @@ def main():
 
             if chr(c) == '\n':
                 doc_clotilde = eval(joined_seq)
-                # print(doc_clotilde['umidade_solo'])
+                print(doc_clotilde)
                 data.append(datetime.now())
                 umidade.append(doc_clotilde['umidade_solo'])
-                temperatura.append(doc_clotilde['umidade_solo'])
+                temperatura.append(doc_clotilde['temperatura ambiente'])
 
 
                 df2 = pd.DataFrame({
@@ -57,7 +60,7 @@ def main():
                 #df['data'] = pd.to_datetime(df['data'])
                 #df.sort_values('data', inplace=True)
 
-                df2.to_csv(url_raspi, index=False)
+                df2.to_csv(data_url, index=False)
 
                 print(df2.tail())
                 #print("Line " + str(count) + ': ' + joined_seq)

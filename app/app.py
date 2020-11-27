@@ -13,6 +13,7 @@ import plotly.graph_objs as go
 import pandas as pd
 
 url_raspi = '/home/gabriel/dev/planta_monitor/app/dataset/clotilde_v1.csv'
+url_mac = '/Users/gabriel/Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv'
 
 app = dash.Dash(
     name='clotilde-monitor', 
