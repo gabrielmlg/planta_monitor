@@ -54,17 +54,20 @@ app.layout = html.Div(
             dbc.Col(
                 html.Div([
                     #html.H2('TESTE')
+                    dcc.Graph(id='temperatura_indicator', animate=True), 
                 ]), md=4
             ),
             dbc.Col(
                 html.Div([
+                    # dcc.Graph(id='temp', animate=True), 
                     #html.H2('TESTE')
                 ]), md=4
             ),
         ], align="center", 
             justify="center", 
             style={'margin-top': '4px',
-            'margin-left': '4px',}),  
+            'margin-left': '2px',
+            'margin-right': '2px'}),  
 
         dbc.Row(dbc.Col(
             html.Div([
@@ -85,13 +88,15 @@ app.layout = html.Div(
 )
 
 
+
 @app.callback(Output('live-graph', 'figure'),
                 Output('umidade_indicator', 'figure'),
+                Output('temperatura_indicator', 'figure'),
               [Input('graph-update', 'n_intervals')])
 def update_graph_scatter(input_data):
     
     # ToDo: Qnd der erro, como proceder? Tentar colocar o dataframe como atributo numa classe instanciada
-    df = pd.read_csv(url_raspi) 
+    df = pd.read_csv(url_mac) 
     # df.sort_values('data', inplace=True)
 
     data = go.Scatter(
@@ -106,29 +111,36 @@ def update_graph_scatter(input_data):
     xaxis_max_date = pd.to_datetime(max(df['data'])) + timedelta(minutes=1)
     scatter_fig = {'data': [data],
                     'layout' : go.Layout(xaxis=dict(range=[min(df['data']),xaxis_max_date]),
-                                                yaxis=dict(range=[min(df['umidade'])-2,max(df['umidade'])+2]),), }
+                                        yaxis=dict(range=[min(df['umidade'])-2,max(df['umidade'])+2]),
+                                        template='plotly_white'
+                                ), }
 
 
     data_umidade_indicator = go.Indicator(
-        mode = 'gauge+number+delta', 
-        gauge = {'shape': "bullet"},
-        delta = {'reference': 500, 'relative': False}, 
-        value = int(df.tail(1)['umidade'].values),
-        domain = {'x': [0.1, 1], 'y': [0.2, 0.9]},
-        #title = {'text': "Indicator de Umidade:"}
+        mode = "number+delta",
+        value = float(df.tail(1)['umidade'].values),
+        title = {"text": "Úmidade<br><span style='font-size:0.8em;color:gray'>Solo</span><br>"},
+        delta = {'reference': 500, 'relative': True},
+        domain = {'x': [0.6, 1], 'y': [0, 1]}
     )
 
-    indicator_fig = {'data': [data_umidade_indicator],
-                    'layout' : go.Layout(height=300, 
-                                        width=600, 
-                                        title='Indicador de Úmidade:', 
-                                        template='plotly_white')}
+    kpi_umidade_fig = {'data': [data_umidade_indicator],
+                    'layout' : go.Layout(template='plotly_white')}
 
+    # Termperatura KPI
+    data_temperatura_indicator = go.Indicator(
+        mode = "number+delta",
+        value = float(df.tail(1)['temperatura'].values),
+        title = {"text": "Temperatura<br><span style='font-size:0.8em;color:gray'>Ambiente</span><br>"},
+        delta = {'reference': 25, 'relative': True},
+        domain = {'x': [0.6, 1], 'y': [0, 1]}
+    )
 
-    return scatter_fig, indicator_fig
+    kpi_temperatura_fig = {'data': [data_temperatura_indicator],
+                    'layout' : go.Layout(template='plotly_white')}
+
+    return scatter_fig, kpi_umidade_fig, kpi_temperatura_fig
     
-
-
 
 
 if __name__ == "__main__":
