@@ -1,8 +1,12 @@
+import json
 import sys
 from serial import Serial
 import pandas as pd
 import os
 from datetime import datetime
+from time import sleep
+from json import dumps
+from kafka import KafkaProducer
 
 
 PARAM_CARACTER='t'
@@ -18,11 +22,17 @@ data_url =  url_mac
 
 s = Serial(port=serial_port, baudrate=9601, bytesize=8, parity='N', stopbits=1, timeout=None, xonxoff=False, rtscts=False, dsrdtr=False)
 
+# configuração do kafka
+broker = 'localhost:9092'
+topico = 'topico-clotilde'
+producer = KafkaProducer(bootstrap_servers=[broker],
+                         value_serializer=lambda x:
+                         dumps(x).encode('utf-8'))
+
+
 data = []
 umidade = []
 temperatura = []
-
-
 
 print(os.getcwd())
 
@@ -44,11 +54,21 @@ def main():
 
             if chr(c) == '\n':
                 doc_clotilde = eval(joined_seq)
-                print(doc_clotilde)
+                #print(doc_clotilde)
                 data.append(datetime.now())
                 umidade.append(doc_clotilde['umidade_solo'])
                 temperatura.append(doc_clotilde['temperatura ambiente'])
 
+                dados = {
+                    'data': str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')), 
+                    'umidade': doc_clotilde['umidade_solo'], 
+                    'temperatura': doc_clotilde['temperatura ambiente']
+                }
+
+                producer.send(topico, value=str(dados))
+                sleep(1)
+
+                print(str(dados))
 
                 df2 = pd.DataFrame({
                     'data': data, 
