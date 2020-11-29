@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from datetime import timedelta
 import dash
 import dash_bootstrap_components as dbc
@@ -11,6 +13,10 @@ import dash_core_components as dcc
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 import pandas as pd
+import plotly.express as px
+
+# Data
+df_ = px.data.iris()
 
 url_raspi = '/home/gabriel/dev/planta_monitor/app/dataset/clotilde_v1.csv'
 url_mac = '/Users/gabriel/Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv'
@@ -20,7 +26,7 @@ app = dash.Dash(
     external_stylesheets=[dbc.themes.LITERA]
 )
 
-
+# Header
 navbar = dbc.NavbarSimple(
     children=[
         dbc.NavItem(dbc.NavLink("Detalhes", href="#")),
@@ -41,55 +47,49 @@ navbar = dbc.NavbarSimple(
     dark=True,
 )
 
+# KPIs
+
 app.layout = html.Div(
     [
-        dbc.Row(dbc.Col(html.Div(navbar))), 
-        
-        dbc.Row([
-            dbc.Col(
-                html.Div([
-                    dcc.Graph(id='umidade_indicator', animate=True), 
-                ]), md=4
-            ), 
-            dbc.Col(
-                html.Div([
-                    #html.H2('TESTE')
-                    dcc.Graph(id='temperatura_indicator', animate=True), 
-                ]), md=4
+        html.Div(navbar), 
+        dbc.Card(
+            dbc.CardBody(
+                [   
+                    dbc.Row([
+                        dbc.Col([
+                            html.Div(
+                                dbc.Card(
+                                    dbc.CardBody([
+                                        dcc.Graph(id='umidade_indicator', animate=True), 
+                                    ]), 
+                                    color='dark'
+                                )
+                            )
+                        ], md=4), 
+                        dbc.Col([
+                            html.Div(
+                                dcc.Graph(id='temperatura_indicator', animate=True),     
+                            )
+                        ], md=4),
+                        dbc.Col([
+                            html.H5('-')
+                        ]) 
+                    ], align='center')
+                    
+                ]
             ),
-            dbc.Col(
-                html.Div([
-                    # dcc.Graph(id='temp', animate=True), 
-                    #html.H2('TESTE')
-                ]), md=4
-            ),
-        ], align="center", 
-            justify="center", 
-            style={'margin-top': '4px',
-            'margin-left': '2px',
-            'margin-right': '2px'}),  
-
-        dbc.Row(dbc.Col(
-            html.Div([
-                dcc.Graph(id='live-graph', animate=True),
-                dcc.Interval(
-                    id='graph-update',
-                    interval=1*2000 # 2 seg
-                ),
-            ]), md=12,  
+            color = 'dark'
         ), 
-        align="right", 
-        justify="center", 
-        style={'margin-top': '4px',
-            'margin-left': '4px',
-            'margin-right': '4px'})
-
+        dcc.Interval(
+            id='graph-update',
+            interval=1*2000 # 2 seg
+        )
+        
     ]
 )
 
 
-
-@app.callback(Output('live-graph', 'figure'),
+@app.callback(#Output('live-graph', 'figure'),
                 Output('umidade_indicator', 'figure'),
                 Output('temperatura_indicator', 'figure'),
               [Input('graph-update', 'n_intervals')])
@@ -127,9 +127,11 @@ def update_graph_scatter(input_data):
     kpi_umidade_fig = {
         'data': [data_umidade_indicator],
         'layout' : go.Layout(
-            template='plotly_white', 
+            template='plotly_dark',
+            plot_bgcolor= 'rgba(0, 0, 0, 0)',
             height=300, 
             width=400, 
+            #paper_bgcolor= 'rgba(0, 0, 0, 0)',
         )
     }
 
@@ -145,15 +147,15 @@ def update_graph_scatter(input_data):
     kpi_temperatura_fig = {
         'data': [data_temperatura_indicator],
         'layout' : go.Layout(
-            template='plotly_white', 
+            template='plotly_dark', 
             height=300, 
             width=400, 
         )
     }
 
-    return scatter_fig, kpi_umidade_fig, kpi_temperatura_fig
-    
+    return kpi_umidade_fig, kpi_temperatura_fig
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=True, port=8000)
+
