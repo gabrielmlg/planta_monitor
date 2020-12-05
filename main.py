@@ -16,9 +16,11 @@ serial_port_raspi = '/dev/ttyACM0'
 url_raspi = '/home/gabriel/dev/planta_monitor/app/dataset/clotilde_v1.csv'
 serial_port_mac = '/dev/cu.usbmodem146101'
 url_mac = '/Users/gabriel/Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv'
+serial_port_macair = '/dev/cu.usbmodem14201'
+url_macair = '/Users/gabriel.lopes/Documents/pessoal/dev/planta_monitor/app/dataset/clotilde_v1.csv'
 
-serial_port = serial_port_mac
-data_url =  url_mac
+serial_port = serial_port_macair
+data_url =  url_macair
 
 s = Serial(port=serial_port, baudrate=9601, bytesize=8, parity='N', stopbits=1, timeout=None, xonxoff=False, rtscts=False, dsrdtr=False)
 
