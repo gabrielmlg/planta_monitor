@@ -6,30 +6,24 @@ import os
 from datetime import datetime
 from time import sleep
 from json import dumps
-from kafka import KafkaProducer
+from pymongo import MongoClient
 
 
 PARAM_CARACTER='t'
 PARAM_ASCII=str(chr(116))
 
 serial_port_raspi = '/dev/ttyACM0' 
-url_raspi = '/home/gabriel/dev/planta_monitor/app/dataset/clotilde_v1.csv'
+url_raspi = '/home/pi/dev/planta_monitor/app/dataset/clotilde_v1.csv'
 serial_port_mac = '/dev/cu.usbmodem146101'
 url_mac = '/Users/gabriel/Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv'
 serial_port_macair = '/dev/cu.usbmodem14201'
 url_macair = '/Users/gabriel.lopes/Documents/pessoal/dev/planta_monitor/app/dataset/clotilde_v1.csv'
+string_conn = 'mongodb://xxxx:xxx@192.168.68.116:27017/admin'
 
-serial_port = serial_port_macair
-data_url =  url_macair
+serial_port = serial_port_raspi
+data_url =  url_raspi
 
 s = Serial(port=serial_port, baudrate=9601, bytesize=8, parity='N', stopbits=1, timeout=None, xonxoff=False, rtscts=False, dsrdtr=False)
-
-# configuração do kafka
-broker = 'localhost:9092'
-topico = 'topico-clotilde'
-producer = KafkaProducer(bootstrap_servers=[broker],
-                         value_serializer=lambda x:
-                         dumps(x).encode('utf-8'))
 
 
 data = []
@@ -42,6 +36,10 @@ def main():
     #this will store the line
     seq = []
     count = 1
+    
+    #client = MongoClient(string_conn)
+    #db = client.clotilde
+    #collection_arduino = db.arduino
 
     try: 
         df = pd.read_csv(data_url)
@@ -67,7 +65,7 @@ def main():
                     'temperatura': doc_clotilde['temperatura ambiente']
                 }
 
-                producer.send(topico, value=str(dados))
+                #collection_arduino.insert_one(dados)
                 sleep(1)
 
                 print(str(dados))
@@ -89,9 +87,6 @@ def main():
                 seq = []
                 count += 1
                 break
-
-
-    ser.close()
 
 
 main()

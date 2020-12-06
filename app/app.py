@@ -12,8 +12,9 @@ from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 import pandas as pd
 
-url_raspi = '/home/gabriel/dev/planta_monitor/app/dataset/clotilde_v1.csv'
+url_raspi = '/home/pi/dev/planta_monitor/app/dataset/clotilde_v1.csv'
 url_mac = '/Users/gabriel/Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv'
+
 
 app = dash.Dash(
     name='clotilde-monitor', 
@@ -96,7 +97,7 @@ app.layout = html.Div(
 def update_graph_scatter(input_data):
     
     # ToDo: Qnd der erro, como proceder? Tentar colocar o dataframe como atributo numa classe instanciada
-    df = pd.read_csv(url_mac) 
+    df = pd.read_csv(url_raspi) 
     # df.sort_values('data', inplace=True)
 
     data = go.Scatter(
