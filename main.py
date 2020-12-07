@@ -9,19 +9,18 @@ from json import dumps
 from pymongo import MongoClient
 
 
-PARAM_CARACTER='t'
-PARAM_ASCII=str(chr(116))
-
 serial_port_raspi = '/dev/ttyACM0' 
 url_raspi = '/home/pi/dev/planta_monitor/app/dataset/clotilde_v1.csv'
 serial_port_mac = '/dev/cu.usbmodem146101'
 url_mac = '/Users/gabriel/Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv'
 serial_port_macair = '/dev/cu.usbmodem14201'
 url_macair = '/Users/gabriel.lopes/Documents/pessoal/dev/planta_monitor/app/dataset/clotilde_v1.csv'
-string_conn = 'mongodb://admin:v73jMSPw9EQI@192.168.68.116:27017/admin'
+string_conn_raspi = 'mongodb://admin:v73jMSPw9EQI@192.168.68.116:27017/admin'
+string_conn_macair = 'mongodb://root:example@localhost:27017/admin'
 
-serial_port = serial_port_raspi
-data_url =  url_raspi
+serial_port = serial_port_macair
+data_url =  url_macair
+string_conn = string_conn_macair
 
 s = Serial(port=serial_port, baudrate=9601, bytesize=8, parity='N', stopbits=1, timeout=None, xonxoff=False, rtscts=False, dsrdtr=False)
 

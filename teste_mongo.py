@@ -14,7 +14,7 @@ print(client.list_database_names())
 db = client.clotilde
 collection_arduino = db.arduino
 
-#print(collection_arduino.delete_many({'temperatura': 10}))
+print(collection_arduino.delete_many({}))
 
 #cursor = collection_arduino.find({})
 
@@ -22,5 +22,5 @@ collection_arduino = db.arduino
 
 #print(datetime.now())
 
-data = {'data': datetime.now(), 'temperatura': 12, 'umidade':60}
-print(collection_arduino.insert_one(data))
+#data = {'data': datetime.now(), 'temperatura': 12, 'umidade':60}
+#print(collection_arduino.insert_one(data))
