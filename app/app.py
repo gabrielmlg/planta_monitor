@@ -17,7 +17,11 @@ url_raspi = '/home/pi/dev/planta_monitor/app/dataset/clotilde_v1.csv'
 url_mac = '/Users/gabriel/Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv'
 
 # Mongodb
-string_conn = 'mongodb://admin:v73jMSPw9EQI@192.168.68.116:27017/admin'
+string_conn_raspi = 'mongodb://admin:v73jMSPw9EQI@192.168.68.116:27017/admin'
+string_conn_mac = 'mongodb://root:example@localhost:27017/admin'
+
+string_conn = string_conn_mac
+
 client = MongoClient(string_conn)
 db = client.clotilde
 collection_arduino = db.arduino
@@ -106,9 +110,7 @@ def update_graph_scatter(input_data):
     #df = pd.read_csv(url_raspi) 
     # df.sort_values('data', inplace=True)
     cursor = collection_arduino.find({})
-    df = pd.DataFrame(list(cursor)).tail(100)
-
-    print(df.tail())
+    df = pd.DataFrame(list(cursor))
 
     data = go.Scatter(
             x=df['data'],
