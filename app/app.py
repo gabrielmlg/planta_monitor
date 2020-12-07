@@ -11,10 +11,16 @@ import dash_core_components as dcc
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 import pandas as pd
+from pymongo import MongoClient
 
 url_raspi = '/home/pi/dev/planta_monitor/app/dataset/clotilde_v1.csv'
 url_mac = '/Users/gabriel/Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv'
 
+# Mongodb
+string_conn = 'mongodb://admin:v73jMSPw9EQI@192.168.68.116:27017/admin'
+client = MongoClient(string_conn)
+db = client.clotilde
+collection_arduino = db.arduino
 
 app = dash.Dash(
     name='clotilde-monitor', 
@@ -97,8 +103,12 @@ app.layout = html.Div(
 def update_graph_scatter(input_data):
     
     # ToDo: Qnd der erro, como proceder? Tentar colocar o dataframe como atributo numa classe instanciada
-    df = pd.read_csv(url_raspi) 
+    #df = pd.read_csv(url_raspi) 
     # df.sort_values('data', inplace=True)
+    cursor = collection_arduino.find({})
+    df = pd.DataFrame(list(cursor)).tail(100)
+
+    print(df.tail())
 
     data = go.Scatter(
             x=df['data'],

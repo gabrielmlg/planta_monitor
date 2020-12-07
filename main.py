@@ -18,7 +18,7 @@ serial_port_mac = '/dev/cu.usbmodem146101'
 url_mac = '/Users/gabriel/Documents/dev/planta_monitor/app/dataset/clotilde_v1.csv'
 serial_port_macair = '/dev/cu.usbmodem14201'
 url_macair = '/Users/gabriel.lopes/Documents/pessoal/dev/planta_monitor/app/dataset/clotilde_v1.csv'
-string_conn = 'mongodb://xxxx:xxx@192.168.68.116:27017/admin'
+string_conn = 'mongodb://admin:v73jMSPw9EQI@192.168.68.116:27017/admin'
 
 serial_port = serial_port_raspi
 data_url =  url_raspi
@@ -37,9 +37,9 @@ def main():
     seq = []
     count = 1
     
-    #client = MongoClient(string_conn)
-    #db = client.clotilde
-    #collection_arduino = db.arduino
+    client = MongoClient(string_conn)
+    db = client.clotilde
+    collection_arduino = db.arduino
 
     try: 
         df = pd.read_csv(data_url)
@@ -65,7 +65,7 @@ def main():
                     'temperatura': doc_clotilde['temperatura ambiente']
                 }
 
-                #collection_arduino.insert_one(dados)
+                collection_arduino.insert_one(dados)
                 sleep(1)
 
                 print(str(dados))
