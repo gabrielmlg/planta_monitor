@@ -112,17 +112,27 @@ def update_graph_scatter(input_data):
     cursor = collection_arduino.find({})
     df = pd.DataFrame(list(cursor))
 
-    data = go.Scatter(
-            x=df['data'],
-            y=df['umidade'],
-            name='Scatter',
-            mode= 'lines', 
-            line=dict(color='green', width=1.8), 
-            line_shape='spline',
-            # marker=dict(size=4)
+    data = [go.Scatter(
+                x=df['data'],
+                y=df['umidade'],
+                name='Scatter',
+                mode= 'lines', 
+                line=dict(color='#94C70A', width=1.8), 
+                line_shape='spline',
+                # marker=dict(size=4)
+            ), 
+            go.Scatter(
+                x=df['data'],
+                y=df['umidade2'],
+                name='Scatter',
+                mode= 'lines', 
+                line=dict(color='#0AC770', width=1.8), 
+                line_shape='spline',
+                # marker=dict(size=4)
             )
+        ]
     xaxis_max_date = pd.to_datetime(max(df['data'])) + timedelta(minutes=1)
-    scatter_fig = {'data': [data],
+    scatter_fig = {'data': data,
                     'layout' : go.Layout(xaxis=dict(range=[min(df['data']),xaxis_max_date]),
                                         yaxis=dict(range=[min(df['umidade'])-2,max(df['umidade'])+2]),
                                         template='plotly_white'

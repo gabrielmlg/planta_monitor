@@ -27,6 +27,7 @@ s = Serial(port=serial_port, baudrate=9601, bytesize=8, parity='N', stopbits=1, 
 
 data = []
 umidade = []
+umidade2 = []
 temperatura = []
 
 print(os.getcwd())
@@ -51,16 +52,21 @@ def main():
             seq.append(chr(c)) #convert from ANSII
             joined_seq = ''.join(str(v) for v in seq) #Make a string from array
 
+            # {'umidade_solo': 1.39, 'per_solo': 25.00, 'umidade_solo2': 1.02, 'per_solo2': 67.00, 'temperatura ambiente': 26.70}
             if chr(c) == '\n':
                 doc_clotilde = eval(joined_seq)
                 #print(doc_clotilde)
                 data.append(datetime.now())
-                umidade.append(doc_clotilde['umidade_solo'])
+                umidade.append(doc_clotilde['per_solo'])
+                umidade2.append(doc_clotilde['per_solo2'])
                 temperatura.append(doc_clotilde['temperatura ambiente'])
 
                 dados = {
                     'data': str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')), 
-                    'umidade': doc_clotilde['umidade_solo'], 
+                    'vol_umidade1': doc_clotilde['umidade_solo'], 
+                    'umidade': doc_clotilde['per_solo'], 
+                    'vol_umidade2': doc_clotilde['umidade_solo2'], 
+                    'umidade2': doc_clotilde['per_solo2'], 
                     'temperatura': doc_clotilde['temperatura ambiente']
                 }
 
@@ -69,19 +75,13 @@ def main():
 
                 print(str(dados))
 
-                df2 = pd.DataFrame({
-                    'data': data, 
-                    'umidade': umidade, 
-                    'temperatura': temperatura
-                })
-
                 #df = df.append(df2, ignore_index=True)
                 #df['data'] = pd.to_datetime(df['data'])
                 #df.sort_values('data', inplace=True)
 
-                df2.to_csv(data_url, index=False)
+                #df2.to_csv(data_url, index=False)
 
-                print(df2.tail())
+                #print(df2.tail())
                 #print("Line " + str(count) + ': ' + joined_seq)
                 seq = []
                 count += 1
