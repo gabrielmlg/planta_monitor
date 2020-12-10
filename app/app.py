@@ -111,11 +111,14 @@ def update_graph_scatter(input_data):
     # df.sort_values('data', inplace=True)
     cursor = collection_arduino.find({})
     df = pd.DataFrame(list(cursor))
+    print(df.tail(10))
+
+    df = df.tail(300)
 
     data = [go.Scatter(
                 x=df['data'],
-                y=df['umidade'],
-                name='Scatter',
+                y=df['vol_umidade1'],
+                name='Sensor 1',
                 mode= 'lines', 
                 line=dict(color='#94C70A', width=1.8), 
                 line_shape='spline',
@@ -123,8 +126,8 @@ def update_graph_scatter(input_data):
             ), 
             go.Scatter(
                 x=df['data'],
-                y=df['umidade2'],
-                name='Scatter',
+                y=df['vol_umidade2'],
+                name='Sensor 2',
                 mode= 'lines', 
                 line=dict(color='#0AC770', width=1.8), 
                 line_shape='spline',
@@ -134,14 +137,14 @@ def update_graph_scatter(input_data):
     xaxis_max_date = pd.to_datetime(max(df['data'])) + timedelta(minutes=1)
     scatter_fig = {'data': data,
                     'layout' : go.Layout(xaxis=dict(range=[min(df['data']),xaxis_max_date]),
-                                        yaxis=dict(range=[min(df['umidade'])-2,max(df['umidade'])+2]),
+                                        # yaxis=dict(range=[0,100]),
                                         template='plotly_white'
                                 ), }
 
 
     data_umidade_indicator = go.Indicator(
         mode = "number+delta",
-        value = float(df.tail(1)['umidade'].values),
+        value = float(df.tail(1)['vol_umidade1'].values),
         title = {"text": "Úmidade<br><span style='font-size:0.8em;color:gray'>Solo</span><br>"},
         delta = {'reference': 500, 'relative': True},
         domain = {'x': [0, 1], 'y': [0, 1]}
